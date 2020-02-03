@@ -29,19 +29,31 @@ namespace Backend.Controllers
             return new JsonResult(context.ToDoLists.FirstOrDefault(todolistiter => todolistiter == toDoList).ToDos);
         }
 
-        [HttpPost("ToDo")]
+        [HttpPost("ToDo/{id}")]
         public void AddToDo([FromBody] ToDo toDo, int id) {
             context.ToDoLists.FirstOrDefault(list => list.Id == id).ToDos.Add(toDo);
             context.SaveChanges();
         }
 
-        [HttpPost("ToDoAsList")]
+        [HttpPost("ToDoAsList/{id}")]
         public void AddToDos([FromBody] List<ToDo> toDos, int id)
         {
             var toDoList = context.ToDoLists.FirstOrDefault(list => list.Id == id);
             foreach(var toDo in toDos) {
                 toDoList.ToDos.Add(toDo);
             }
+            context.SaveChanges();
+        }
+
+        [HttpPut("ToDo")]
+        public void ModifyToDo([FromBody]ToDo toDo) {
+            context.Entry(toDo).State = EntityState.Modified;
+            context.SaveChanges();
+        }
+
+        [HttpDelete("ToDo")]
+        public void DeleteToDo([FromBody]ToDo toDo){
+            context.Entry(toDo).State = EntityState.Deleted;
             context.SaveChanges();
         }
     }
